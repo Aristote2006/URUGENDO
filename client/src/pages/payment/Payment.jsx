@@ -12,6 +12,9 @@ import {
   Smartphone,
   AlertCircle,
   HelpCircle,
+  CheckCircle2,
+  AlertTriangle,
+  Phone,
 } from 'lucide-react';
 import { plansConfig, paymentInfo } from '../../config/plans';
 import { useLanguage } from '../../context/LanguageContext';
@@ -42,6 +45,7 @@ export default function Payment() {
   const [copiedNumber, setCopiedNumber] = useState(false);
   const [copiedMtn, setCopiedMtn] = useState(false);
   const [copiedAirtel, setCopiedAirtel] = useState(false);
+  const [whatsappClicked, setWhatsappClicked] = useState(false);
 
   const selectedPlan = plansConfig[selectedPlanId] || plansConfig.monthly;
 
@@ -459,6 +463,130 @@ I have attached my payment screenshot.`;
               </button>
             </div>
 
+            {/* Action Area: Step 1 & Step 2 (Directly below MTN / Airtel codes) */}
+            <div className="space-y-6">
+              {/* Step 1 Card: WhatsApp Action */}
+              <div className="p-7 md:p-8 rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-xl space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2">
+                      <span>{lang === 'rw' ? 'Intambwe ya 1' : 'Step 1 of 2'}</span>
+                    </div>
+                    <h3 className="font-display font-bold text-2xl text-white">
+                      {lang === 'rw' ? 'Ohereza Screenshot kuri WhatsApp' : 'Send Payment Screenshot on WhatsApp'}
+                    </h3>
+                    <p className="text-slate-300 text-sm max-w-xl leading-relaxed mt-1">
+                      {lang === 'rw'
+                        ? 'Kanda buto iri munsi kugira ngo ufungure WhatsApp yacu ifite amakuru yawe yuzuye, hanyuma wohereze screenshot y’ubwishyu.'
+                        : 'Click the button below to open WhatsApp with your pre-filled payment details. Attach your screenshot in the chat to provide proof of payment.'}
+                    </p>
+                  </div>
+
+                  <div className="flex-shrink-0">
+                    <a
+                      href={generateWhatsAppUrl()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setWhatsappClicked(true)}
+                      className="inline-flex items-center gap-2.5 px-6 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] text-slate-950 font-bold text-sm sm:text-base shadow-lg shadow-emerald-500/20 transition-all cursor-pointer"
+                    >
+                      <MessageSquare className="w-5 h-5 fill-current flex-shrink-0" />
+                      <span>{lang === 'rw' ? 'Fungura WhatsApp & Ohereza' : 'Open WhatsApp & Send Screenshot'}</span>
+                    </a>
+                  </div>
+                </div>
+
+                {whatsappClicked && (
+                  <div className="pt-3 border-t border-slate-800/80 flex items-center gap-2 text-xs font-semibold text-emerald-400 animate-in fade-in duration-300">
+                    <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                    <span>
+                      {lang === 'rw'
+                        ? 'WhatsApp yafunguwe! Nyamuneka uzamure amaso hasi wuzuze Intambwe ya 2 y’ingenzi yo kwemeza ubwishyu.'
+                        : 'WhatsApp opened! Now complete Step 2 below by confirming your phone number to submit.'}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Step 2 Card: CRITICAL MANDATORY CONFIRMATION */}
+              <div
+                className={`p-7 md:p-9 rounded-3xl transition-all duration-300 shadow-2xl border-2 ${
+                  whatsappClicked
+                    ? 'bg-amber-950/20 dark:bg-amber-950/30 border-amber-500 shadow-amber-500/10 ring-4 ring-amber-500/20'
+                    : 'bg-white dark:bg-ink-900 border-amber-500/80 dark:border-amber-500/60'
+                }`}
+              >
+                {/* Critical Alert Header */}
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center flex-shrink-0 shadow-md">
+                    <AlertTriangle className="w-6 h-6 stroke-[2.5]" />
+                  </div>
+                  <div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-700 dark:text-amber-400 text-xs font-black uppercase tracking-wider mb-1.5">
+                      <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+                      <span>
+                        {lang === 'rw' ? 'INTAMBWE YA 2 Y’INGENZI CYANEE (MANDATORY)' : 'CRITICAL STEP 2: REQUIRED ACTION'}
+                      </span>
+                    </div>
+                    <h3 className="font-display font-bold text-2xl text-ink-900 dark:text-white tracking-tight">
+                      {lang === 'rw'
+                        ? 'Emeza ko wohereje ubwishyu kuri WhatsApp'
+                        : 'Confirm That You Sent Payment Proof on WhatsApp'}
+                    </h3>
+                    <p className="text-sm font-medium text-amber-800 dark:text-amber-300/90 leading-relaxed mt-1">
+                      {lang === 'rw'
+                        ? 'ICYITONDERWA: Kohereza screenshot kuri WhatsApp gusa ntibihagije! UGOMBA kwinjiza nimero ya telefone wishyuyeho maze ukande buto yo kwemeza iri munsi. Ibi nibyo bituma ubuyobozi bubona ubwishyu bwawe ako kanya bugahita bugufungurira konti.'
+                        : 'CRITICAL NOTICE: Sending on WhatsApp is NOT enough by itself! You MUST enter the phone number used to make payment below and click confirm. This registers your payment in our system so the administrator can immediately verify and activate your account.'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Confirmation Form */}
+                <form onSubmit={handleConfirmPaymentSubmission} className="space-y-5 max-w-xl">
+                  <div>
+                    <label className="block text-xs sm:text-sm font-bold text-ink-900 dark:text-ink-100 mb-2">
+                      {lang === 'rw'
+                        ? '1. Nimero ya telefone wakoresheje wishyura (MTN MoMo cyangwa Airtel Money):'
+                        : '1. Phone number you used to send payment (MTN MoMo or Airtel Money):'}
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-emerald-600 dark:text-emerald-400">
+                        <Phone className="w-5 h-5" />
+                      </div>
+                      <input
+                        type="tel"
+                        required
+                        value={paymentPhone}
+                        onChange={(e) => setPaymentPhone(e.target.value)}
+                        placeholder="urugero: 0788123456 cyangwa 0731234567"
+                        className="w-full pl-12 pr-4 py-4 text-base font-semibold rounded-2xl bg-ink-50 dark:bg-ink-950 text-ink-900 dark:text-white border-2 border-emerald-500 dark:border-emerald-500/80 focus:outline-none focus:ring-4 focus:ring-emerald-500/25 focus:border-emerald-600 transition-all placeholder:text-ink-400 dark:placeholder:text-ink-600 shadow-inner"
+                      />
+                    </div>
+                    <p className="text-xs text-ink-500 dark:text-ink-400 mt-1.5 pl-1">
+                      {lang === 'rw'
+                        ? 'Ubuyobozi buzareba iyi nimero mu butumwa bwa MoMo kugira ngo bwemeze ubwishyu bwawe.'
+                        : 'Our administration will verify this phone number in the mobile money statement to approve your account.'}
+                    </p>
+                  </div>
+
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      className="w-full sm:w-auto px-8 py-4 rounded-2xl font-bold text-base bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] text-white transition-all shadow-xl shadow-emerald-600/30 inline-flex items-center justify-center gap-3 cursor-pointer"
+                    >
+                      <CheckCircle2 className="w-5 h-5 text-white" />
+                      <span>
+                        {lang === 'rw'
+                          ? 'Narangije Kwishyura · Emeza & Saba Gufungurirwa Konti'
+                          : 'I Have Sent Proof · Submit for Immediate Verification'}
+                      </span>
+                      <ArrowRight className="w-5 h-5 text-white" />
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
             {/* Step-by-Step Payment Walkthrough (Steps 1 to 8) */}
             <div className="p-7 md:p-8 rounded-3xl bg-ink-50 dark:bg-ink-950 border border-ink-200 dark:border-ink-800">
               <h3 className="font-display font-bold text-xl mb-6">
@@ -517,65 +645,6 @@ I have attached my payment screenshot.`;
                   </div>
                 ))}
               </div>
-            </div>
-
-            {/* Action Card: WhatsApp Direct Action & Confirmation */}
-            <div className="p-7 md:p-9 rounded-3xl bg-brand-900 text-white dark:bg-brand-950 dark:border dark:border-brand-800 shadow-xl space-y-6">
-              <div>
-                <h3 className="font-display font-bold text-2xl mb-2">
-                  {lang === 'rw' ? 'Ohereza Screenshot kuri WhatsApp' : 'Send Payment Screenshot on WhatsApp'}
-                </h3>
-                <p className="text-brand-200 text-sm max-w-xl leading-relaxed">
-                  Click the button below to open WhatsApp with your pre-filled payment details. Attach your screenshot in the chat to complete proof of payment.
-                </p>
-              </div>
-
-              {/* Action 1: WhatsApp Button */}
-              <div>
-                <a
-                  href={generateWhatsAppUrl()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2.5 px-6 py-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-ink-950 font-bold text-sm shadow-lg transition-all"
-                >
-                  <MessageSquare className="w-5 h-5 fill-current" />
-                  <span>Send Payment Screenshot on WhatsApp</span>
-                </a>
-              </div>
-
-              {/* Action 2: Confirmation Form */}
-              <form
-                onSubmit={handleConfirmPaymentSubmission}
-                className="pt-6 border-t border-brand-800/80 space-y-4"
-              >
-                <h4 className="font-semibold text-sm text-brand-100">
-                  {lang === 'rw'
-                    ? 'Wamaze kohereza screenshot kuri WhatsApp? Emeza hano:'
-                    : 'Already sent your screenshot on WhatsApp? Confirm below:'}
-                </h4>
-
-                <div className="max-w-md">
-                  <label className="block text-xs font-medium text-brand-200 mb-1.5">
-                    {lang === 'rw' ? 'Nimero ya telefone wakoresheje wishyura:' : 'Phone number used to make payment:'}
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    value={paymentPhone}
-                    onChange={(e) => setPaymentPhone(e.target.value)}
-                    placeholder="078... cyangwa 073..."
-                    className="w-full px-4 py-3 text-sm rounded-xl bg-brand-950 text-white border border-brand-700 focus:outline-none focus:border-brand-400"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="px-6 py-3.5 rounded-xl font-semibold text-sm bg-white hover:bg-brand-100 text-brand-950 transition-all inline-flex items-center gap-2"
-                >
-                  <span>{lang === 'rw' ? 'Narangije Kwishyura · Emeza' : 'I Have Sent Screenshot · Submit for Verification'}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </form>
             </div>
           </div>
         )}

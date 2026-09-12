@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, ArrowRight, Phone, AlertCircle } from 'lucide-react';
+import { X, ArrowRight, Phone, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { useAuthModal } from '../../context/AuthModalContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
@@ -25,6 +25,8 @@ export default function AuthModal() {
     remember: false,
   });
 
+  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -236,17 +238,27 @@ export default function AuthModal() {
                   <label className="block text-xs font-semibold text-ink-700 dark:text-ink-300 mb-1">
                     {t('auth.password')}
                   </label>
-                  <input
-                    type="password"
-                    required
-                    minLength={8}
-                    value={registerForm.password}
-                    onChange={(e) =>
-                      setRegisterForm({ ...registerForm, password: e.target.value })
-                    }
-                    className="input-field w-full px-3.5 py-2.5 text-sm bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-xl focus:outline-none"
-                    placeholder={t('auth.passwordPlaceholderReg')}
-                  />
+                  <div className="relative flex items-center">
+                    <input
+                      type={showRegisterPassword ? 'text' : 'password'}
+                      required
+                      minLength={8}
+                      value={registerForm.password}
+                      onChange={(e) =>
+                        setRegisterForm({ ...registerForm, password: e.target.value })
+                      }
+                      className="input-field w-full pl-3.5 pr-10 py-2.5 text-sm bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-xl focus:outline-none"
+                      placeholder={t('auth.passwordPlaceholderReg')}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowRegisterPassword(!showRegisterPassword)}
+                      className="absolute right-3 p-1 text-ink-400 hover:text-ink-600 dark:hover:text-ink-200 focus:outline-none transition-colors"
+                      aria-label={showRegisterPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showRegisterPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
                 <label className="flex items-start gap-2.5 pt-1 cursor-pointer">
                   <input
@@ -330,16 +342,26 @@ export default function AuthModal() {
                       {t('auth.forgotPassword')}
                     </a>
                   </div>
-                  <input
-                    type="password"
-                    required
-                    value={loginForm.password}
-                    onChange={(e) =>
-                      setLoginForm({ ...loginForm, password: e.target.value })
-                    }
-                    className="input-field w-full px-3.5 py-2.5 text-sm bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-xl focus:outline-none"
-                    placeholder={t('auth.passwordPlaceholderLog')}
-                  />
+                  <div className="relative flex items-center">
+                    <input
+                      type={showLoginPassword ? 'text' : 'password'}
+                      required
+                      value={loginForm.password}
+                      onChange={(e) =>
+                        setLoginForm({ ...loginForm, password: e.target.value })
+                      }
+                      className="input-field w-full pl-3.5 pr-10 py-2.5 text-sm bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-xl focus:outline-none"
+                      placeholder={t('auth.passwordPlaceholderLog')}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowLoginPassword(!showLoginPassword)}
+                      className="absolute right-3 p-1 text-ink-400 hover:text-ink-600 dark:hover:text-ink-200 focus:outline-none transition-colors"
+                      aria-label={showLoginPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showLoginPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
                 <label className="flex items-center gap-2.5 pt-1 cursor-pointer">
                   <input
