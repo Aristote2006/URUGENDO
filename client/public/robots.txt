@@ -1,0 +1,10 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+# Host & Sitemaps
+Host: https://urugendo.rw
+Sitemap: https://urugendo.rw/sitemap.xml
+

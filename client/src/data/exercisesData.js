@@ -1,0 +1,133 @@
+/**
+ * Practice exercises by category for Urugendo.
+ */
+
+export const exerciseCategories = [
+  {
+    id: 'traffic-signs',
+    title: 'Traffic Signs Mastery',
+    titleRw: 'Ibyapa byose byo mu Muhanda',
+    icon: 'TriangleAlert',
+    questionCount: 85,
+    completedCount: 0,
+    description: 'Drill regulatory, danger warning, mandatory, and informative road signs.',
+    descriptionRw: 'Kwitoza ibyapa biburira, ibitegeka, ibibuza n’ibiyobora byose.',
+    questions: [
+      {
+        id: 'ts-1',
+        question: 'What does an inverted (upside-down) red-bordered triangle sign indicate?',
+        questionRw: 'Icyapa cy’umutwe ucuritse gifite umusemburo utukura gisobanura iki?',
+        options: ['Stop completely', 'Give way / Yield (Tanga Inzira)', 'End of priority', 'Dangerous dip'],
+        correctIndex: 1,
+        explanation: 'An inverted triangle is the universal Give Way (Yield) sign requiring you to cede priority to cross traffic.',
+        explanationRw: 'Icyapa cy’umutwe ucuritse kiguha itegeko ryo guha inzira ibindi binyabiziga biri mu muhanda ugiyemo.',
+      },
+      {
+        id: 'ts-2',
+        question: 'A round sign with a red border containing the number 40 means:',
+        questionRw: 'Icyapa cy’uruziga rw’umutuku kirimo umubare 40 gisobanura iki?',
+        options: ['Minimum speed 40 km/h', 'Maximum speed limit 40 km/h', 'Recommended speed 40 km/h', 'Distance to town 40 km'],
+        correctIndex: 1,
+        explanation: 'A circular sign with a red border and a number indicates a mandatory maximum speed limit.',
+        explanationRw: 'Icyapa cy’uruziga rw’umutuku kirimo umubare kivuga umuvuduko ntarengwa wemewe.',
+      },
+      {
+        id: 'ts-3',
+        question: 'A square blue sign with a white capital letter "P" signifies:',
+        questionRw: 'Icyapa cya kare cy’ubururu kirimo inyuguti ya "P" gisobanura iki?',
+        options: ['Police station ahead', 'Parking area permitted', 'Prohibited road', 'Pedestrian zone'],
+        correctIndex: 1,
+        explanation: 'A square or rectangular blue sign with "P" denotes designated parking spaces.',
+        explanationRw: 'Inyuguti ya "P" mu cyapa cy’ubururu isobanura ahantu hemewe guhagarika ibinyabiziga (Parking).',
+      },
+    ],
+  },
+  {
+    id: 'road-rules',
+    title: 'General Road Rules',
+    titleRw: 'Amategeko Rusange y’Umuhanda',
+    icon: 'BookOpen',
+    questionCount: 120,
+    completedCount: 0,
+    description: 'Speed limits, overtaking, lane discipline, and vehicle equipment regulations.',
+    descriptionRw: 'Umuvuduko, kunyuranaho, amategeko yo kugendera mu byerekezo n’ibikoresho.',
+    questions: [
+      {
+        id: 'rr-1',
+        question: 'Outside built-up areas on rural national paved highways, what is the maximum general speed limit for private cars?',
+        questionRw: 'Hanze y’imigi ku mihanda ya kaburimbo, umuvuduko ntarengwa rusange w’imodoka zisanzwe ni uwuhe?',
+        options: ['60 km/h', '80 km/h', '100 km/h', '120 km/h'],
+        correctIndex: 1,
+        explanation: 'In Rwanda, the general statutory speed limit outside built-up areas on main roads is 80 km/h unless posted otherwise.',
+        explanationRw: 'Ku mihanda yo hanze y’imigi, umuvuduko ntarengwa ni 80 km/h keretse icyapa kibigaragaza ukundi.',
+      },
+      {
+        id: 'rr-2',
+        question: 'When is it strictly prohibited to overtake another vehicle?',
+        questionRw: 'Ni ryari bibujijwe burundu kunyuraho ku kindi kinyabiziga?',
+        options: [
+          'On a straight and clear road',
+          'At sharp blind bends, hill crests with limited visibility, and immediately before pedestrian crossings',
+          'Whenever you are driving an automatic car',
+          'Between 2:00 PM and 4:00 PM',
+        ],
+        correctIndex: 1,
+        explanation: 'Overtaking is forbidden where visibility is insufficient, at crests, blind curves, and pedestrian crossings.',
+        explanationRw: 'Birabujijwe kunyuranaho mu makona atagaragara neza, ku mpinga y’umusozi, no ku mirongo y’abanyamaguru.',
+      },
+    ],
+  },
+  {
+    id: 'priorities',
+    title: 'Right of Way & Intersections',
+    titleRw: 'Uburenganzira bwo Gutambuka n’Amasangano',
+    icon: 'Compass',
+    questionCount: 65,
+    completedCount: 0,
+    description: 'Roundabouts, junction priorities, police commands, and vehicle hierarchies.',
+    descriptionRw: 'Round-points, amasangano, ibimenyetso by’abapolisi n’ugomba gutambuka mbere.',
+    questions: [
+      {
+        id: 'pri-1',
+        question: 'When two vehicles arrive simultaneously at an unmarked crossroad, which one gives way?',
+        questionRw: 'Iyo ibinyabiziga bibiri bihuriye mu masangano adafite ibyapa icyarimwe, ni ikihe kigomba guha ikindi inzira?',
+        options: [
+          'The vehicle having the other on its right gives way',
+          'The vehicle having the other on its left gives way',
+          'The older vehicle gives way',
+          'The vehicle turning right gives way',
+        ],
+        correctIndex: 0,
+        explanation: 'Priority to the Right mandates that the driver with a vehicle coming from their right must yield passage.',
+        explanationRw: 'Itegeko ry’iburyo risaba ko uwo ikindi kinyabiziga giturutse iburyo bwe ari we ugomba kugihagararira kigatambuka.',
+      },
+    ],
+  },
+  {
+    id: 'road-safety',
+    title: 'Road Safety & Emergency Situations',
+    titleRw: 'Umutekano no Kwirinda Impanuka',
+    icon: 'ShieldCheck',
+    questionCount: 50,
+    completedCount: 0,
+    description: 'Breakdowns, weather hazards, tire blowouts, braking distances, and defensive driving.',
+    descriptionRw: 'Gupfa kw’ikinyabiziga, ibihe by’imvura n’igihu, gutwara wirinda n’intera yo guhagarara.',
+    questions: [
+      {
+        id: 'rs-1',
+        question: 'During heavy rainfall, how does stopping distance change?',
+        questionRw: 'Iyo imvura iri kugwa cyane, intera yo guhagarara ihinduka ite?',
+        options: [
+          'It remains exactly the same',
+          'It significantly increases (can double) due to reduced tire traction and wet pavement',
+          'It decreases because the road cools down',
+          'Brakes work faster in wet conditions',
+        ],
+        correctIndex: 1,
+        explanation: 'Wet surfaces reduce friction dramatically, doubling the required braking distance.',
+        explanationRw: 'Umuhanda uranyerera iyo watose, bityo intera yo guhagarara yikuba kabiri.',
+      },
+    ],
+  },
+];
+

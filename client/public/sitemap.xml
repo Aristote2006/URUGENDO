@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <!-- Homepage -->
+  <url>
+    <loc>https://urugendo.rw/</loc>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://urugendo.rw/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="rw" href="https://urugendo.rw/?lang=rw" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://urugendo.rw/" />
+  </url>
+
+  <!-- Our Services -->
+  <url>
+    <loc>https://urugendo.rw/services</loc>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://urugendo.rw/services?lang=en" />
+    <xhtml:link rel="alternate" hreflang="rw" href="https://urugendo.rw/services?lang=rw" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://urugendo.rw/services" />
+  </url>
+
+  <!-- About Us -->
+  <url>
+    <loc>https://urugendo.rw/about</loc>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://urugendo.rw/about?lang=en" />
+    <xhtml:link rel="alternate" hreflang="rw" href="https://urugendo.rw/about?lang=rw" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://urugendo.rw/about" />
+  </url>
+
+  <!-- Help & Tutorials -->
+  <url>
+    <loc>https://urugendo.rw/help</loc>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://urugendo.rw/help?lang=en" />
+    <xhtml:link rel="alternate" hreflang="rw" href="https://urugendo.rw/help?lang=rw" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://urugendo.rw/help" />
+  </url>
+</urlset>
+
