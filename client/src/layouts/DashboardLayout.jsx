@@ -45,6 +45,16 @@ export default function DashboardLayout() {
 
   const remainingDays = getRemainingDays();
 
+  // Defense-in-depth: if user is expired, immediately redirect to payment renewal menu
+  React.useEffect(() => {
+    const isPlanExpired =
+      user?.subscription?.status === 'expired' ||
+      (user?.subscription?.expiresAt && new Date(user.subscription.expiresAt) < new Date());
+    if (isPlanExpired) {
+      navigate('/payment', { state: { expired: true }, replace: true });
+    }
+  }, [user?.subscription?.status, user?.subscription?.expiresAt, navigate]);
+
   const handleLogout = () => {
     logout();
     navigate('/login');

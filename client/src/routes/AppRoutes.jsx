@@ -24,6 +24,7 @@ import PaymentPending from '../pages/payment/PaymentPending';
 import DashboardHome from '../pages/dashboard/DashboardHome';
 import Learning from '../pages/dashboard/Learning';
 import LessonViewer from '../pages/dashboard/LessonViewer';
+import ExercisePlayer from '../pages/dashboard/ExercisePlayer';
 import MockExams from '../pages/dashboard/MockExams';
 import Exercises from '../pages/dashboard/Exercises';
 import Progress from '../pages/dashboard/Progress';
@@ -36,6 +37,10 @@ import AdminUsers from '../pages/admin/AdminUsers';
 import AdminPayments from '../pages/admin/AdminPayments';
 import AdminSubscriptions from '../pages/admin/AdminSubscriptions';
 import AdminLearning from '../pages/admin/AdminLearning';
+import AdminExercises from '../pages/admin/AdminExercises';
+import AdminExerciseDetails from '../pages/admin/AdminExerciseDetails';
+import AdminExerciseImport from '../pages/admin/AdminExerciseImport';
+import AdminExerciseReview from '../pages/admin/AdminExerciseReview';
 import AdminProfile from '../pages/admin/AdminProfile';
 
 export default function AppRoutes() {
@@ -85,6 +90,7 @@ export default function AppRoutes() {
         <Route path="/dashboard" element={<DashboardHome />} />
         <Route path="/learning" element={<Learning />} />
         <Route path="/learning/:lessonId" element={<LessonViewer />} />
+        <Route path="/learning/:lessonId/exercise" element={<ExercisePlayer />} />
         <Route path="/mock-exams" element={<MockExams />} />
         <Route path="/exercises" element={<Exercises />} />
         <Route path="/progress" element={<Progress />} />
@@ -109,6 +115,10 @@ export default function AppRoutes() {
         <Route path="payments" element={<AdminPayments />} />
         <Route path="subscriptions" element={<AdminSubscriptions />} />
         <Route path="learning" element={<AdminLearning />} />
+        <Route path="exercises" element={<AdminExercises />} />
+        <Route path="exercises/:id" element={<AdminExerciseDetails />} />
+        <Route path="exercises/:id/import" element={<AdminExerciseImport />} />
+        <Route path="exercises/:id/review" element={<AdminExerciseReview />} />
         <Route path="profile" element={<AdminProfile />} />
       </Route>
     </Routes>

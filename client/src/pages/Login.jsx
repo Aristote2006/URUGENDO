@@ -35,9 +35,15 @@ export default function Login() {
       const res = await login(email.trim(), password);
       if (res?.success) {
         const userStatus = res.user?.subscription?.status;
+        const expiresAt = res.user?.subscription?.expiresAt;
+        const isExpired =
+          userStatus === 'expired' ||
+          (expiresAt && new Date(expiresAt) < new Date());
 
         // Handle redirect based on real subscription status
-        if (userStatus === 'active') {
+        if (isExpired) {
+          navigate('/payment', { state: { expired: true }, replace: true });
+        } else if (userStatus === 'active') {
           const from = location.state?.from?.pathname || '/dashboard';
           navigate(from, { replace: true });
         } else if (userStatus === 'awaiting_verification') {

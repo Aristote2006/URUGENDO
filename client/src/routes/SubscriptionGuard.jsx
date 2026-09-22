@@ -24,6 +24,14 @@ export default function SubscriptionGuard({ children, requireActiveOnly = false 
   }
 
   const status = user?.subscription?.status || 'pending_payment';
+  const isExpired =
+    status === 'expired' ||
+    (user?.subscription?.expiresAt && new Date(user.subscription.expiresAt) < new Date());
+
+  // Expired users must NEVER access dashboard or premium pages; redirect to payment renewal menu
+  if (isExpired) {
+    return <Navigate to="/payment" state={{ expired: true }} replace />;
+  }
 
   if (status === 'pending_payment') {
     return <Navigate to="/payment" replace />;
@@ -31,11 +39,6 @@ export default function SubscriptionGuard({ children, requireActiveOnly = false 
 
   if (status === 'awaiting_verification') {
     return <Navigate to="/payment/pending" replace />;
-  }
-
-  // If requireActiveOnly is true and plan is expired, redirect to payment for renewal
-  if (requireActiveOnly && status === 'expired') {
-    return <Navigate to="/payment" state={{ expired: true }} replace />;
   }
 
   return children;

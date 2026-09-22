@@ -40,6 +40,14 @@ export const authenticateUser = async (req, res, next) => {
       });
     }
 
+    // Auto-check and persist subscription expiration if past expiresAt date
+    if (user.subscription?.status === 'active' && user.subscription?.expiresAt) {
+      if (new Date(user.subscription.expiresAt) < new Date()) {
+        user.subscription.status = 'expired';
+        await user.save();
+      }
+    }
+
     req.user = user;
     next();
   } catch (error) {
@@ -53,15 +61,28 @@ export const authenticateUser = async (req, res, next) => {
   }
 };
 
-/**
- * Enforces administrator role.
- * Must be preceded by authenticateUser.
- */
 export const requireAdmin = (req, res, next) => {
   if (!req.user || req.user.role !== 'admin') {
     return res.status(403).json({
       success: false,
       message: 'Forbidden. Administrator privileges required to access this resource.',
+    });
+  }
+  next();
+};
+
+/**
+ * Enforces active customer subscription.
+ * Blocks expired or pending subscriptions from accessing learning resources.
+ */
+export const requireActiveSubscription = (req, res, next) => {
+  if (req.user?.role === 'admin') return next();
+  const sub = req.user?.subscription;
+  if (!sub || sub.status !== 'active') {
+    return res.status(403).json({
+      success: false,
+      code: 'SUBSCRIPTION_REQUIRED',
+      message: 'An active subscription is required to access learning materials. Please renew your subscription.',
     });
   }
   next();

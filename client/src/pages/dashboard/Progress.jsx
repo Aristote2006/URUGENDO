@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   TrendingUp,
@@ -17,21 +17,42 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { learningCurriculum } from '../../data/learningData';
+import { lessonService } from '../../services/lessonService';
 
 export default function Progress() {
   const { user } = useAuth();
   const { lang } = useLanguage();
 
+  const [curriculumStats, setCurriculumStats] = useState({
+    total: 0,
+    completed: 0,
+    percent: 0,
+  });
+
+  useEffect(() => {
+    const fetchProgress = async () => {
+      try {
+        const res = await lessonService.getLessons();
+        if (res.success && res.data) {
+          setCurriculumStats({
+            total: res.data.totalLessons !== undefined ? res.data.totalLessons : (res.data.lessons?.length || 0),
+            completed: res.data.completedLessons || 0,
+            percent: res.data.overallProgressPercent || 0,
+          });
+        }
+      } catch (err) {
+        console.warn('[Progress] Could not load lessons:', err.message);
+      }
+    };
+    fetchProgress();
+  }, []);
+
   const completedLessons = user?.progress?.completedLessons || [];
   const completedExercises = user?.progress?.completedExercises || 0;
   const examAttempts = user?.progress?.examAttempts || [];
 
-  const totalLessons = learningCurriculum.reduce(
-    (acc, mod) => acc + mod.lessons.length,
-    0
-  );
-  const lessonsPercentage = Math.round((completedLessons.length / totalLessons) * 100);
+  const totalLessons = curriculumStats.total;
+  const lessonsPercentage = totalLessons > 0 ? curriculumStats.percent : 0;
 
   // Compute average and best mock exam scores
   let avgExamScore = 0;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   BookOpen,
@@ -17,7 +17,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { plansConfig } from '../../config/plans';
-import { learningCurriculum } from '../../data/learningData';
+import { lessonService } from '../../services/lessonService';
 
 export default function DashboardHome() {
   const { user, isExpired, replayTutorial } = useAuth();
@@ -26,15 +26,36 @@ export default function DashboardHome() {
   const planId = user?.subscription?.plan || 'monthly';
   const planDetails = plansConfig[planId] || plansConfig.monthly;
 
-  // Real progress metrics from AuthContext
-  const completedLessonsCount = user?.progress?.completedLessons?.length || 0;
-  const totalLessonsCount = learningCurriculum.reduce(
-    (acc, mod) => acc + mod.lessons.length,
-    0
-  );
-  const courseProgressPercent = Math.round(
-    (completedLessonsCount / totalLessonsCount) * 100
-  );
+  const [realLessons, setRealLessons] = useState([]);
+  const [curriculumStats, setCurriculumStats] = useState({
+    total: 0,
+    completed: 0,
+    percent: 0,
+  });
+
+  useEffect(() => {
+    const fetchProgress = async () => {
+      try {
+        const res = await lessonService.getLessons();
+        if (res.success && res.data) {
+          const list = res.data.lessons || [];
+          setRealLessons(list);
+          setCurriculumStats({
+            total: res.data.totalLessons !== undefined ? res.data.totalLessons : list.length,
+            completed: res.data.completedLessons || 0,
+            percent: res.data.overallProgressPercent || 0,
+          });
+        }
+      } catch (err) {
+        console.warn('[DashboardHome] Could not load lessons progress:', err.message);
+      }
+    };
+    fetchProgress();
+  }, []);
+
+  const totalLessonsCount = curriculumStats.total;
+  const completedLessonsCount = curriculumStats.completed;
+  const courseProgressPercent = curriculumStats.percent;
 
   const completedExercisesCount = user?.progress?.completedExercises || 0;
   const examAttemptsCount = user?.progress?.examAttempts?.length || 0;
@@ -51,12 +72,23 @@ export default function DashboardHome() {
     });
   };
 
-  // Find next uncompleted lesson
-  const allLessons = learningCurriculum.flatMap((m) => m.lessons);
-  const nextLesson =
-    allLessons.find(
-      (les) => !user?.progress?.completedLessons?.includes(les.id)
-    ) || allLessons[0];
+  // Find next uncompleted and unlocked lesson
+  const nextRealLesson =
+    realLessons.find((les) => !les.progress?.videoCompleted && !les.isLocked) ||
+    realLessons[0];
+
+  const nextLesson = nextRealLesson
+    ? {
+        id: nextRealLesson._id,
+        lessonNumber: nextRealLesson.lessonNumber,
+        title: nextRealLesson.title?.en,
+        titleRw: nextRealLesson.title?.rw || nextRealLesson.title?.en,
+        notes: nextRealLesson.summary?.en || nextRealLesson.notes?.en || 'Official Highway Code Video Lecture',
+        teacher: 'Certified Road Safety Instructor',
+        teacherRw: 'Umwarimu wemewe w’Amategeko y’Umuhanda',
+        duration: nextRealLesson.durationSeconds ? `${Math.round(nextRealLesson.durationSeconds / 60)} mins` : '15 mins',
+      }
+    : null;
 
   return (
     <div className="space-y-8 animate-fadeIn">
@@ -83,17 +115,29 @@ export default function DashboardHome() {
           </p>
 
           <div className="flex flex-wrap items-center gap-3">
-            <Link
-              to={`/learning/${nextLesson.id}`}
-              className="px-5 py-3 rounded-xl bg-white hover:bg-brand-100 text-brand-950 font-bold text-xs sm:text-sm inline-flex items-center gap-2 transition-all shadow-md"
-            >
-              <Play className="w-4 h-4 fill-current" />
-              <span>
-                {lang === 'rw'
-                  ? `Komeza: Isomo rya ${nextLesson.lessonNumber}`
-                  : `Resume: Lesson ${nextLesson.lessonNumber}`}
-              </span>
-            </Link>
+            {nextLesson ? (
+              <Link
+                to={`/learning/${nextLesson.id}`}
+                className="px-5 py-3 rounded-xl bg-white hover:bg-brand-100 text-brand-950 font-bold text-xs sm:text-sm inline-flex items-center gap-2 transition-all shadow-md"
+              >
+                <Play className="w-4 h-4 fill-current" />
+                <span>
+                  {lang === 'rw'
+                    ? `Komeza: Isomo rya ${nextLesson.lessonNumber}`
+                    : `Resume: Lesson ${nextLesson.lessonNumber}`}
+                </span>
+              </Link>
+            ) : (
+              <Link
+                to="/learning"
+                className="px-5 py-3 rounded-xl bg-white hover:bg-brand-100 text-brand-950 font-bold text-xs sm:text-sm inline-flex items-center gap-2 transition-all shadow-md"
+              >
+                <BookOpen className="w-4 h-4" />
+                <span>
+                  {lang === 'rw' ? 'Reba Integanyanyigisho' : 'Explore Curriculum'}
+                </span>
+              </Link>
+            )}
 
             <Link
               to="/mock-exams"
@@ -270,37 +314,70 @@ export default function DashboardHome() {
 
       {/* Next Recommended Activity Section */}
       <div className="grid lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-8 p-6 sm:p-8 rounded-3xl bg-ink-50 dark:bg-ink-950 border border-ink-200 dark:border-ink-800 shadow-sm flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-widest">
-                Up Next In Your Curriculum
-              </span>
-              <span className="text-xs text-ink-500 font-medium">
-                Lesson {nextLesson.lessonNumber}
-              </span>
+        {nextLesson ? (
+          <div className="lg:col-span-8 p-6 sm:p-8 rounded-3xl bg-ink-50 dark:bg-ink-950 border border-ink-200 dark:border-ink-800 shadow-sm flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-xs font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-widest">
+                  Up Next In Your Curriculum
+                </span>
+                <span className="text-xs text-ink-500 font-medium">
+                  Lesson {nextLesson.lessonNumber}
+                </span>
+              </div>
+              <h4 className="font-display font-bold text-xl sm:text-2xl mb-2">
+                {lang === 'rw' ? nextLesson.titleRw : nextLesson.title}
+              </h4>
+              <p className="text-xs sm:text-sm text-ink-600 dark:text-ink-400 leading-relaxed mb-6">
+                {lang === 'rw' ? nextLesson.notes : nextLesson.notes}
+              </p>
             </div>
-            <h4 className="font-display font-bold text-xl sm:text-2xl mb-2">
-              {lang === 'rw' ? nextLesson.titleRw : nextLesson.title}
-            </h4>
-            <p className="text-xs sm:text-sm text-ink-600 dark:text-ink-400 leading-relaxed mb-6">
-              {lang === 'rw' ? nextLesson.notes : nextLesson.notes}
-            </p>
-          </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-ink-200/60 dark:border-ink-800/60">
-            <span className="text-xs text-ink-500">
-              Instructor: {lang === 'rw' ? nextLesson.teacherRw : nextLesson.teacher} · {nextLesson.duration}
-            </span>
-            <Link
-              to={`/learning/${nextLesson.id}`}
-              className="px-4 py-2 rounded-xl text-xs font-bold btn-primary inline-flex items-center gap-1.5 shadow-sm"
-            >
-              <span>Start Lesson</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+            <div className="flex items-center justify-between pt-4 border-t border-ink-200/60 dark:border-ink-800/60">
+              <span className="text-xs text-ink-500">
+                Instructor: {lang === 'rw' ? nextLesson.teacherRw : nextLesson.teacher} · {nextLesson.duration}
+              </span>
+              <Link
+                to={`/learning/${nextLesson.id}`}
+                className="px-4 py-2 rounded-xl text-xs font-bold btn-primary inline-flex items-center gap-1.5 shadow-sm"
+              >
+                <span>Start Lesson</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="lg:col-span-8 p-6 sm:p-8 rounded-3xl bg-ink-50 dark:bg-ink-950 border border-ink-200 dark:border-ink-800 shadow-sm flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-xs font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-widest">
+                  {lang === 'rw' ? 'Amasomo Yiteganyijwe' : 'Curriculum Status'}
+                </span>
+              </div>
+              <h4 className="font-display font-bold text-xl sm:text-2xl mb-2">
+                {lang === 'rw' ? 'Nta masomo arashyirwaho' : 'New Lessons Coming Soon'}
+              </h4>
+              <p className="text-xs sm:text-sm text-ink-600 dark:text-ink-400 leading-relaxed mb-6">
+                {lang === 'rw'
+                  ? 'Abarimu b’inzobere mu mategeko y’umuhanda bari gutegura amashusho mashya y’amasomo. Fungura kuri iyi paji mu kanya gato.'
+                  : 'Official lessons and video lectures are currently being published by certified instructors. Please check back shortly.'}
+              </p>
+            </div>
+
+            <div className="flex items-center justify-between pt-4 border-t border-ink-200/60 dark:border-ink-800/60">
+              <span className="text-xs text-ink-500">
+                {lang === 'rw' ? 'Integanyanyigisho y’u Rwanda' : 'Rwanda Highway Code Syllabus'}
+              </span>
+              <Link
+                to="/learning"
+                className="px-4 py-2 rounded-xl text-xs font-bold btn-primary inline-flex items-center gap-1.5 shadow-sm"
+              >
+                <span>{lang === 'rw' ? 'Reba Integanyanyigisho' : 'View Curriculum'}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        )}
 
         <div className="lg:col-span-4 p-6 sm:p-8 rounded-3xl bg-ink-100/60 dark:bg-ink-900/40 border border-ink-200 dark:border-ink-800 shadow-sm flex flex-col justify-between">
           <div>

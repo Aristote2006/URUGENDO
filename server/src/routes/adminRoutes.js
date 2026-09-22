@@ -13,7 +13,30 @@ import {
   rejectPayment,
 } from '../controllers/adminPaymentController.js';
 import { getSubscriptions } from '../controllers/adminSubscriptionController.js';
-import { getLearningOverview } from '../controllers/adminLearningController.js';
+import {
+  getLearningOverview,
+  getLessons,
+  getLessonById,
+  createLesson,
+  updateLesson,
+  togglePublishLesson,
+  deleteLesson,
+} from '../controllers/adminLearningController.js';
+import {
+  uploadExerciseDocs,
+  getExercises,
+  createExercise,
+  getExerciseById,
+  updateExercise,
+  deleteExercise,
+  importExerciseDocuments,
+  getExerciseQuestions,
+  updateExerciseQuestion,
+  approveExerciseQuestion,
+  approveAllValidQuestions,
+  publishExercise,
+  unpublishExercise,
+} from '../controllers/adminExerciseController.js';
 import {
   getAdminProfile,
   updateAdminProfile,
@@ -48,8 +71,29 @@ router.patch('/payments/:id/reject', rejectPayment);
 // Subscription Management
 router.get('/subscriptions', getSubscriptions);
 
-// Learning Management Foundation
+// Learning Management
 router.get('/learning', getLearningOverview);
+router.get('/lessons', getLessons);
+router.post('/lessons', createLesson);
+router.get('/lessons/:id', getLessonById);
+router.patch('/lessons/:id', updateLesson);
+router.delete('/lessons/:id', deleteLesson);
+router.patch('/lessons/:id/publish', togglePublishLesson);
+
+// Exercise & Question Bank Management (Phase 3A)
+router.get('/exercises', getExercises);
+router.post('/exercises', createExercise);
+router.get('/exercises/:id', getExerciseById);
+router.put('/exercises/:id', updateExercise);
+router.delete('/exercises/:id', deleteExercise);
+
+router.post('/exercises/:id/import', uploadExerciseDocs, importExerciseDocuments);
+router.get('/exercises/:id/questions', getExerciseQuestions);
+router.put('/exercises/:id/questions/:questionId', updateExerciseQuestion);
+router.post('/exercises/:id/questions/:questionId/approve', approveExerciseQuestion);
+router.post('/exercises/:id/approve-valid', approveAllValidQuestions);
+router.post('/exercises/:id/publish', publishExercise);
+router.post('/exercises/:id/unpublish', unpublishExercise);
 
 // Admin Profile
 router.get('/profile', getAdminProfile);

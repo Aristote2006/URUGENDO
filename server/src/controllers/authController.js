@@ -122,6 +122,16 @@ export const login = async (req, res, next) => {
       });
     }
 
+    // Auto-check and transition expired subscription
+    if (
+      user.subscription?.status === 'active' &&
+      user.subscription?.expiresAt &&
+      new Date(user.subscription.expiresAt) < new Date()
+    ) {
+      user.subscription.status = 'expired';
+      await user.save();
+    }
+
     const token = generateCustomerToken(user);
 
     res.status(200).json({

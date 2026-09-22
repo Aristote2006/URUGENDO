@@ -6,6 +6,7 @@ import {
   CreditCard,
   Layers,
   BookOpen,
+  FileQuestion,
   User,
   LogOut,
   Menu,
@@ -38,6 +39,7 @@ export default function AdminLayout() {
     { to: '/admin/payments', icon: CreditCard, label: 'Payments' },
     { to: '/admin/subscriptions', icon: Layers, label: 'Subscriptions' },
     { to: '/admin/learning', icon: BookOpen, label: 'Learning' },
+    { to: '/admin/exercises', icon: FileQuestion, label: 'Exercises' },
     { to: '/admin/profile', icon: User, label: 'Profile' },
   ];
 

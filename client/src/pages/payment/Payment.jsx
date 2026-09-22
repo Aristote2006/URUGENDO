@@ -463,6 +463,67 @@ I have attached my payment screenshot.`;
               </button>
             </div>
 
+            {/* Step-by-Step Payment Walkthrough (Steps 1 to 8) */}
+            <div className="p-7 md:p-8 rounded-3xl bg-ink-50 dark:bg-ink-950 border border-ink-200 dark:border-ink-800">
+              <h3 className="font-display font-bold text-xl mb-6">
+                {lang === 'rw' ? 'Intambwe 8 zo kwishyura:' : '8-Step Payment Process:'}
+              </h3>
+
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                  {
+                    num: '1',
+                    title: 'Choose Plan',
+                    desc: `${selectedPlan.name} (${selectedPlan.price} RWF) selected.`,
+                  },
+                  {
+                    num: '2',
+                    title: 'Send Amount',
+                    desc: `Pay ${selectedPlan.price} RWF via MTN or Airtel Money to ${paymentInfo.formattedPhone}.`,
+                  },
+                  {
+                    num: '3',
+                    title: 'Keep SMS Confirmation',
+                    desc: 'Wait for the telecom SMS confirming money sent.',
+                  },
+                  {
+                    num: '4',
+                    title: 'Take Screenshot',
+                    desc: 'Capture a clear screenshot of the confirmation SMS.',
+                  },
+                  {
+                    num: '5',
+                    title: 'Send to WhatsApp',
+                    desc: `Send the screenshot to WhatsApp ${paymentInfo.formattedPhone}.`,
+                  },
+                  {
+                    num: '6',
+                    title: 'Include Details',
+                    desc: `Include registered name (${user?.name}) and payment phone.`,
+                  },
+                  {
+                    num: '7',
+                    title: 'Wait Verification',
+                    desc: 'Our team verifies payment details promptly.',
+                  },
+                  {
+                    num: '8',
+                    title: 'Account Activated',
+                    desc: 'Your account is unlocked for full course access.',
+                  },
+                ].map((s) => (
+                  <div key={s.num} className="p-4 rounded-xl bg-ink-100/60 dark:bg-ink-900/60 border border-ink-200 dark:border-ink-800">
+                    <span className="font-grotesk font-bold text-brand-600 dark:text-brand-400 text-sm block mb-1">
+                      STEP {s.num}
+                    </span>
+                    <h5 className="font-semibold text-sm mb-1">{s.title}</h5>
+                    <p className="text-xs text-ink-500 dark:text-ink-400 leading-relaxed">{s.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Action Area: Step 1 & Step 2 */}
             {/* Action Area: Step 1 & Step 2 (Directly below MTN / Airtel codes) */}
             <div className="space-y-6">
               {/* Step 1 Card: WhatsApp Action */}

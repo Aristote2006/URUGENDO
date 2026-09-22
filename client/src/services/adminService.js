@@ -13,10 +13,19 @@ const getHeaders = () => {
   };
 };
 
-const safeFetch = async (url, options) => {
+const safeFetch = async (url, options, retries = 1) => {
   try {
-    return await fetch(url, options);
+    const res = await fetch(url, options);
+    if (res.status === 502 && retries > 0) {
+      await new Promise((r) => setTimeout(r, 600));
+      return await safeFetch(url, options, retries - 1);
+    }
+    return res;
   } catch (err) {
+    if (retries > 0) {
+      await new Promise((r) => setTimeout(r, 600));
+      return await safeFetch(url, options, retries - 1);
+    }
     console.error('[AdminAPI] Network error:', err);
     throw new Error('Cannot connect to the server. Please ensure the backend server is running on port 5000.');
   }
@@ -123,10 +132,59 @@ export const adminService = {
     return handleResponse(res);
   },
 
-  // Learning Management Foundation
+  // Learning Management
   async getLearningOverview() {
-    const res = await safeFetch(`${API_BASE_URL}/admin/learning`, {
+    const res = await safeFetch(`${API_BASE_URL}/admin/lessons`, {
       headers: getHeaders(),
+    });
+    return handleResponse(res);
+  },
+
+  async getLessons() {
+    const res = await safeFetch(`${API_BASE_URL}/admin/lessons`, {
+      headers: getHeaders(),
+    });
+    return handleResponse(res);
+  },
+
+  async getLessonById(id) {
+    const res = await safeFetch(`${API_BASE_URL}/admin/lessons/${id}`, {
+      headers: getHeaders(),
+    });
+    return handleResponse(res);
+  },
+
+  async createLesson(data) {
+    const res = await safeFetch(`${API_BASE_URL}/admin/lessons`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return handleResponse(res);
+  },
+
+  async updateLesson(id, data) {
+    const res = await safeFetch(`${API_BASE_URL}/admin/lessons/${id}`, {
+      method: 'PATCH',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return handleResponse(res);
+  },
+
+  async deleteLesson(id) {
+    const res = await safeFetch(`${API_BASE_URL}/admin/lessons/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    return handleResponse(res);
+  },
+
+  async togglePublishLesson(id, isPublished) {
+    const res = await safeFetch(`${API_BASE_URL}/admin/lessons/${id}/publish`, {
+      method: 'PATCH',
+      headers: getHeaders(),
+      body: JSON.stringify({ isPublished }),
     });
     return handleResponse(res);
   },
@@ -144,6 +202,107 @@ export const adminService = {
       method: 'PUT',
       headers: getHeaders(),
       body: JSON.stringify(data),
+    });
+    return handleResponse(res);
+  },
+
+  // Exercise & Question Bank Management (Phase 3A)
+  async getExercises(params = {}) {
+    const query = new URLSearchParams(params).toString();
+    const res = await safeFetch(`${API_BASE_URL}/admin/exercises?${query}`, {
+      headers: getHeaders(),
+    });
+    return handleResponse(res);
+  },
+
+  async getExerciseById(id) {
+    const res = await safeFetch(`${API_BASE_URL}/admin/exercises/${id}`, {
+      headers: getHeaders(),
+    });
+    return handleResponse(res);
+  },
+
+  async createExercise(data) {
+    const res = await safeFetch(`${API_BASE_URL}/admin/exercises`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return handleResponse(res);
+  },
+
+  async updateExercise(id, data) {
+    const res = await safeFetch(`${API_BASE_URL}/admin/exercises/${id}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return handleResponse(res);
+  },
+
+  async deleteExercise(id) {
+    const res = await safeFetch(`${API_BASE_URL}/admin/exercises/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    return handleResponse(res);
+  },
+
+  async importExerciseDocuments(id, formData) {
+    const token = localStorage.getItem('urugendo_admin_token');
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const res = await safeFetch(`${API_BASE_URL}/admin/exercises/${id}/import`, {
+      method: 'POST',
+      headers, // Do NOT set Content-Type so browser sets multipart boundary
+      body: formData,
+    });
+    return handleResponse(res);
+  },
+
+  async getExerciseQuestions(id) {
+    const res = await safeFetch(`${API_BASE_URL}/admin/exercises/${id}/questions`, {
+      headers: getHeaders(),
+    });
+    return handleResponse(res);
+  },
+
+  async updateExerciseQuestion(id, questionId, data) {
+    const res = await safeFetch(`${API_BASE_URL}/admin/exercises/${id}/questions/${questionId}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    return handleResponse(res);
+  },
+
+  async approveExerciseQuestion(id, questionId) {
+    const res = await safeFetch(`${API_BASE_URL}/admin/exercises/${id}/questions/${questionId}/approve`, {
+      method: 'POST',
+      headers: getHeaders(),
+    });
+    return handleResponse(res);
+  },
+
+  async approveAllValidQuestions(id) {
+    const res = await safeFetch(`${API_BASE_URL}/admin/exercises/${id}/approve-valid`, {
+      method: 'POST',
+      headers: getHeaders(),
+    });
+    return handleResponse(res);
+  },
+
+  async publishExercise(id) {
+    const res = await safeFetch(`${API_BASE_URL}/admin/exercises/${id}/publish`, {
+      method: 'POST',
+      headers: getHeaders(),
+    });
+    return handleResponse(res);
+  },
+
+  async unpublishExercise(id) {
+    const res = await safeFetch(`${API_BASE_URL}/admin/exercises/${id}/unpublish`, {
+      method: 'POST',
+      headers: getHeaders(),
     });
     return handleResponse(res);
   },

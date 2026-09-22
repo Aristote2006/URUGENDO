@@ -5,6 +5,8 @@ import trafficSignRoutes from './trafficSignRoutes.js';
 import examRoutes from './examRoutes.js';
 import paymentRoutes from './paymentRoutes.js';
 import adminRoutes from './adminRoutes.js';
+import lessonRoutes from './lessonRoutes.js';
+import exerciseRoutes from './exerciseRoutes.js';
 
 const router = express.Router();
 
@@ -27,5 +29,7 @@ router.use('/courses', courseRoutes);
 router.use('/traffic-signs', trafficSignRoutes);
 router.use('/exams', examRoutes);
 router.use('/payments', paymentRoutes);
+router.use('/lessons', lessonRoutes);
+router.use('/exercises', exerciseRoutes);
 
 export default router;

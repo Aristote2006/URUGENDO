@@ -7,6 +7,23 @@ const STORAGE_KEY = 'urugendo_customer_user';
 const TOKEN_KEY = 'urugendo_customer_token';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
+const fetchWithRetry = async (url, options, retries = 1) => {
+  try {
+    const res = await fetch(url, options);
+    if (res.status === 502 && retries > 0) {
+      await new Promise((r) => setTimeout(r, 600));
+      return await fetchWithRetry(url, options, retries - 1);
+    }
+    return res;
+  } catch (err) {
+    if (retries > 0) {
+      await new Promise((r) => setTimeout(r, 600));
+      return await fetchWithRetry(url, options, retries - 1);
+    }
+    throw err;
+  }
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     try {
@@ -91,7 +108,7 @@ export const AuthProvider = ({ children }) => {
   const register = async ({ name, email, phone, password }) => {
     let res;
     try {
-      res = await fetch(`${API_BASE_URL}/auth/register`, {
+      res = await fetchWithRetry(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, phone, password }),
@@ -136,7 +153,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     let res;
     try {
-      res = await fetch(`${API_BASE_URL}/auth/login`, {
+      res = await fetchWithRetry(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
